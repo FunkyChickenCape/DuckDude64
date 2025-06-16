@@ -22,7 +22,7 @@
 
 ## 🚀 Запуск проекта
 
-1. Скачайте репозиторий:
+1. Скачайте ZIP
 2. Распакуйте в папке
 3. Запустите проект в Godot
 ---
@@ -38,6 +38,6 @@
 
 ## 🚀 Getting Started
 
-1. Download the repository:
+1. Download the ZIP
 2. Unzip the folder
 3. Launch the project in Godot
