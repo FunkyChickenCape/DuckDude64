@@ -1,0 +1,102 @@
+[gd_scene load_steps=12 format=3 uid="uid://b3diss6jpbmqs"]
+
+[ext_resource type="Script" uid="uid://cnwreekvjy4mj" path="res://Scripts/CharacterBody3D.gd" id="2_l3se7"]
+[ext_resource type="PackedScene" uid="uid://cjp4rsmjt0pkn" path="res://Models/Character.glb" id="3_7wgtc"]
+[ext_resource type="Texture2D" uid="uid://dhn12a3bmq16n" path="res://Images/Skybox.png" id="4_afh7w"]
+[ext_resource type="Texture2D" uid="uid://dyv1ol1udgoxe" path="res://Models/Island_dfda1b1e-94c8-4388-8ef2-3509be5c7241.png" id="4_n8efl"]
+[ext_resource type="Texture2D" uid="uid://b2u4sn48kwuy3" path="res://Models/Island_e00b6898-5ef6-454b-a5cc-109bde8158c1.png" id="5_l3se7"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_u3cyc"]
+radius = 0.71008
+height = 3.41077
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_m7jmp"]
+panorama = ExtResource("4_afh7w")
+
+[sub_resource type="Sky" id="Sky_u3cyc"]
+sky_material = SubResource("PanoramaSkyMaterial_m7jmp")
+radiance_size = 2
+
+[sub_resource type="Environment" id="Environment_m7jmp"]
+background_mode = 2
+sky = SubResource("Sky_u3cyc")
+sky_custom_fov = 120.0
+ambient_light_source = 3
+ambient_light_color = Color(0.841982, 0.814728, 0.595512, 1)
+reflected_light_source = 2
+glow_enabled = true
+glow_intensity = 0.0
+fog_enabled = true
+fog_density = 0.1047
+fog_sky_affect = 0.2
+volumetric_fog_density = 0.0289
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_l3se7"]
+albedo_texture = ExtResource("4_n8efl")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7wgtc"]
+albedo_texture = ExtResource("5_l3se7")
+
+[node name="Node3D" type="Node3D"]
+transform = Transform3D(0.999235, 0, 0, 0, 0.999235, 0, 0, 0, 0.999235, 0, 0, 0)
+
+[node name="CharacterBody3D" type="CharacterBody3D" parent="."]
+transform = Transform3D(1.00158, 0, 0, 0, 1.00158, 0, 0, 0, 1.00158, 0, 0.753545, -0.22834)
+script = ExtResource("2_l3se7")
+speed = null
+sprint_multiplier = null
+jump_velocity = null
+gravity = null
+acceleration = null
+camera_distance = null
+camera_height = null
+camera_smooth_speed = null
+mouse_sensitivity = null
+min_pitch = null
+max_pitch = null
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D"]
+transform = Transform3D(1.00126, 0, 0, 0, 1.00126, 0, 0, 0, 1.00126, 0, 1.83686, 0)
+shape = SubResource("CapsuleShape3D_u3cyc")
+
+[node name="CameraPivot" type="Node3D" parent="CharacterBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.687147, 0)
+
+[node name="Camera3D" type="Camera3D" parent="CharacterBody3D/CameraPivot"]
+transform = Transform3D(0.999187, 0, 0, 0, 0.99313, 0.109853, 0, -0.109853, 0.99313, 0, 3.412, 4.531)
+fov = 70.0
+
+[node name="Character" parent="CharacterBody3D" instance=ExtResource("3_7wgtc")]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1.00076, -0.000782877, 0.00212051, -0.00214913, -0.0385906, 1.00002, -0.000700506, -1.00002, -0.0385922, 0, 16.5063, 0)
+light_color = Color(0.957138, 0.957947, 0.960155, 1)
+light_bake_mode = 1
+shadow_enabled = true
+shadow_bias = 0.605
+directional_shadow_mode = 0
+sky_mode = 1
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_m7jmp")
+
+[node name="Ground" type="StaticBody3D" parent="."]
+
+[node name="Ground" type="CSGBox3D" parent="Ground"]
+transform = Transform3D(1205.42, 0, 0, 0, 1.00342, 0, 0, 0, 1661.37, 0, 0, 0)
+use_collision = true
+material = SubResource("StandardMaterial3D_l3se7")
+
+[node name="Platform" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.28986, -11.9761)
+
+[node name="CSGBox3D" type="CSGBox3D" parent="Platform"]
+transform = Transform3D(9.69741, 0, 0, 0, 1, 0, 0, 0, 6.74234, 0, -0.842143, 0)
+use_collision = true
+
+[node name="Water" type="StaticBody3D" parent="."]
+
+[node name="Water" type="CSGBox3D" parent="Water"]
+transform = Transform3D(9.69745, 0, 0, 0, 1.00001, 0, 0, 0, 24.1458, 16.2665, 1.94441, -12.3372)
+material_override = SubResource("StandardMaterial3D_7wgtc")
+size = Vector3(0.836426, 1, 1)

@@ -1,0 +1,173 @@
+[gd_scene load_steps=14 format=3 uid="uid://b3diss6jpbmqs"]
+
+[ext_resource type="Script" uid="uid://cnwreekvjy4mj" path="res://Scripts/Player.gd" id="2_l3se7"]
+[ext_resource type="PackedScene" uid="uid://cjp4rsmjt0pkn" path="res://Models/Character.glb" id="3_7wgtc"]
+[ext_resource type="Texture2D" uid="uid://dhn12a3bmq16n" path="res://Images/Skybox.png" id="4_afh7w"]
+[ext_resource type="Texture2D" uid="uid://dyv1ol1udgoxe" path="res://Models/Island_dfda1b1e-94c8-4388-8ef2-3509be5c7241.png" id="4_n8efl"]
+[ext_resource type="Texture2D" uid="uid://b2u4sn48kwuy3" path="res://Models/Island_e00b6898-5ef6-454b-a5cc-109bde8158c1.png" id="5_l3se7"]
+[ext_resource type="Script" uid="uid://ttwbw6wjtqyb" path="res://Scripts/Main.gd" id="6_7wgtc"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_u3cyc"]
+radius = 0.71008
+height = 3.41077
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_l3se7"]
+albedo_texture = ExtResource("4_n8efl")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7wgtc"]
+albedo_texture = ExtResource("5_l3se7")
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_n8efl"]
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_m7jmp"]
+panorama = ExtResource("4_afh7w")
+
+[sub_resource type="Sky" id="Sky_u3cyc"]
+sky_material = SubResource("PanoramaSkyMaterial_m7jmp")
+radiance_size = 2
+
+[sub_resource type="Environment" id="Environment_m7jmp"]
+background_mode = 2
+sky = SubResource("Sky_u3cyc")
+sky_custom_fov = 120.0
+ambient_light_source = 3
+ambient_light_color = Color(0.841982, 0.814728, 0.595512, 1)
+reflected_light_source = 2
+glow_enabled = true
+glow_intensity = 0.0
+fog_enabled = true
+fog_density = 0.1047
+fog_sky_affect = 0.2
+volumetric_fog_density = 0.0289
+
+[node name="Main" type="Node3D"]
+transform = Transform3D(0.999235, 0, 0, 0, 0.999235, 0, 0, 0, 0.999235, 0, 0, 0)
+script = ExtResource("6_7wgtc")
+
+[node name="CharacterBody3D" type="CharacterBody3D" parent="."]
+transform = Transform3D(1.00158, 0, 0, 0, 1.00158, 0, 0, 0, 1.00158, 0, 0.753545, -0.22834)
+script = ExtResource("2_l3se7")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D"]
+transform = Transform3D(1.00126, 0, 0, 0, 1.00126, 0, 0, 0, 1.00126, 0, 1.83686, 0)
+shape = SubResource("CapsuleShape3D_u3cyc")
+
+[node name="CameraPivot" type="Node3D" parent="CharacterBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10.4257, -6.97059)
+
+[node name="Camera3D" type="Camera3D" parent="CharacterBody3D/CameraPivot"]
+transform = Transform3D(0.999187, 0, 0, 0, 0.999187, 0, 0, 0, 0.999187, -0.0882356, -6.07803, 10.123)
+fov = 80.0
+
+[node name="Character" parent="CharacterBody3D" instance=ExtResource("3_7wgtc")]
+
+[node name="World" type="Node3D" parent="."]
+
+[node name="Ground" type="StaticBody3D" parent="World"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -798.568)
+
+[node name="Ground" type="CSGBox3D" parent="World/Ground"]
+transform = Transform3D(1205.42, 0, 0, 0, 1.00342, 0, 0, 0, 1661.37, 0, 0, 0)
+use_collision = true
+material = SubResource("StandardMaterial3D_l3se7")
+
+[node name="Platform" type="StaticBody3D" parent="World"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.28986, -11.9761)
+
+[node name="Platform" type="CSGBox3D" parent="World/Platform"]
+transform = Transform3D(9.69741, 0, 0, 0, 1, 0, 0, 0, 6.74234, 0, -0.842143, 0)
+use_collision = true
+
+[node name="Water" type="StaticBody3D" parent="World"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.1599, 1.3186, -0.934821)
+
+[node name="Water" type="CSGBox3D" parent="World/Water"]
+transform = Transform3D(12.9652, 0, 0, 0, 1, 0, 0, 0, 14.2021, 0, -1.39189, 38.6155)
+material_override = SubResource("StandardMaterial3D_7wgtc")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="World/Water/Water"]
+transform = Transform3D(12.9652, 0, 0, 0, 1, 0, 0, 0, 14.2021, 0, 0, 0)
+shape = SubResource("BoxShape3D_n8efl")
+
+[node name="Platform2" type="StaticBody3D" parent="World"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.98802, 5.97926, -11.9761)
+
+[node name="Platform" type="CSGBox3D" parent="World/Platform2"]
+transform = Transform3D(9.69741, 0, 0, 0, 1, 0, 0, 0, 6.74234, 0, -0.842143, 0)
+use_collision = true
+
+[node name="Platform3" type="StaticBody3D" parent="World"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.98802, 7.16578, -21.4605)
+
+[node name="Platform" type="CSGBox3D" parent="World/Platform3"]
+transform = Transform3D(9.69741, 0, 0, 0, 1, 0, 0, 0, 6.74234, 0, -0.842143, 0)
+use_collision = true
+
+[node name="Environment" type="Node3D" parent="."]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Environment"]
+environment = SubResource("Environment_m7jmp")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Environment"]
+transform = Transform3D(1.00076, -0.000782862, 0.00212053, -0.00214914, -0.0385906, 1.00002, -0.000700508, -1.00002, -0.0385922, 0, 16.5063, 0)
+light_color = Color(0.957138, 0.957947, 0.960155, 1)
+light_bake_mode = 1
+shadow_enabled = true
+shadow_bias = 0.605
+directional_shadow_mode = 0
+directional_shadow_fade_start = 0.755
+directional_shadow_max_distance = 811.3
+sky_mode = 1
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="MainMenu" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("6_7wgtc")
+
+[node name="Label" type="Label" parent="CanvasLayer/MainMenu"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 23.0
+grow_horizontal = 2
+text = "Duck Dude 64
+Main Menu"
+horizontal_alignment = 1
+
+[node name="StartButton" type="Button" parent="CanvasLayer/MainMenu"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -4.0
+offset_top = -4.0
+offset_right = 4.0
+offset_bottom = 4.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Start Game"
+script = ExtResource("6_7wgtc")
+
+[node name="QuitButton" type="Button" parent="CanvasLayer/MainMenu"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.69
+anchor_right = 0.5
+anchor_bottom = 0.69
+offset_left = -22.0
+offset_top = -17.6
+offset_right = 20.0
+offset_bottom = 13.4
+grow_horizontal = 2
+grow_vertical = 2
+text = "Quit"
+script = ExtResource("6_7wgtc")

@@ -1,0 +1,104 @@
+[gd_scene load_steps=10 format=3 uid="uid://b3diss6jpbmqs"]
+
+[ext_resource type="Script" uid="uid://cnwreekvjy4mj" path="res://Scripts/Player.gd" id="2_l3se7"]
+[ext_resource type="PackedScene" uid="uid://cjp4rsmjt0pkn" path="res://Models/Character.glb" id="3_7wgtc"]
+[ext_resource type="Texture2D" uid="uid://bo3eikcaostwv" path="res://Images/sky.png" id="3_uda6b"]
+[ext_resource type="Texture2D" uid="uid://dyv1ol1udgoxe" path="res://Models/Island_dfda1b1e-94c8-4388-8ef2-3509be5c7241.png" id="4_n8efl"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_u3cyc"]
+radius = 0.71008
+height = 3.41077
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_n8efl"]
+albedo_texture = ExtResource("4_n8efl")
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_n8efl"]
+panorama = ExtResource("3_uda6b")
+
+[sub_resource type="Sky" id="Sky_n8efl"]
+sky_material = SubResource("PanoramaSkyMaterial_n8efl")
+
+[sub_resource type="Environment" id="Environment_dk8ui"]
+background_mode = 2
+sky = SubResource("Sky_n8efl")
+ambient_light_source = 3
+fog_enabled = true
+fog_mode = 1
+fog_light_color = Color(0.586961, 0.594421, 0.600783, 1)
+fog_light_energy = 2.52
+fog_density = 1.0
+fog_sky_affect = 0.05
+fog_depth_curve = 1.93191
+fog_depth_begin = 0.0
+fog_depth_end = 178.4
+
+[node name="Main" type="Node3D"]
+transform = Transform3D(0.999235, 0, 0, 0, 0.999235, 0, 0, 0, 0.999235, 0, 0, 0)
+
+[node name="Player" type="CharacterBody3D" parent="."]
+transform = Transform3D(1.00158, 0, 0, 0, 1.00158, 0, 0, 0, 1.00158, 0, 0.753545, -0.22834)
+script = ExtResource("2_l3se7")
+speed = null
+sprint_multiplier = null
+jump_velocity = null
+gravity = null
+acceleration = null
+camera_distance = null
+camera_height = null
+camera_smooth_speed = null
+mouse_sensitivity = null
+min_pitch = null
+max_pitch = null
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Player"]
+transform = Transform3D(1.00126, 0, 0, 0, 1.00126, 0, 0, 0, 1.00126, 0, 1.83686, 0)
+shape = SubResource("CapsuleShape3D_u3cyc")
+
+[node name="CameraPivot" type="Node3D" parent="Player"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10.4257, -6.97059)
+
+[node name="Camera3D" type="Camera3D" parent="Player/CameraPivot"]
+transform = Transform3D(0.999187, 0, 0, 0, 0.999187, 0, 0, 0, 0.999187, -0.0882356, -6.07803, 10.123)
+fov = 80.0
+
+[node name="Character" parent="Player" instance=ExtResource("3_7wgtc")]
+
+[node name="World" type="Node3D" parent="."]
+
+[node name="Ground" type="StaticBody3D" parent="World"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -798.568)
+
+[node name="Ground" type="CSGBox3D" parent="World/Ground"]
+transform = Transform3D(1205.42, 0, 0, 0, 1.00342, 0, 0, 0, 1661.37, 0, 0, 0)
+material_override = SubResource("StandardMaterial3D_n8efl")
+use_collision = true
+
+[node name="Platform" type="StaticBody3D" parent="World"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.28986, -11.9761)
+
+[node name="Platform" type="CSGBox3D" parent="World/Platform"]
+transform = Transform3D(9.69741, 0, 0, 0, 1, 0, 0, 0, 6.74234, 0, -0.842143, 0)
+use_collision = true
+
+[node name="Platform2" type="StaticBody3D" parent="World"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.98802, 5.97926, -11.9761)
+
+[node name="Platform" type="CSGBox3D" parent="World/Platform2"]
+transform = Transform3D(9.69741, 0, 0, 0, 1, 0, 0, 0, 6.74234, 0, -0.842143, 0)
+use_collision = true
+
+[node name="Platform3" type="StaticBody3D" parent="World"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.98802, 7.16578, -21.4605)
+
+[node name="Platform" type="CSGBox3D" parent="World/Platform3"]
+transform = Transform3D(9.69741, 0, 0, 0, 1, 0, 0, 0, 6.74234, 0, -0.842143, 0)
+use_collision = true
+
+[node name="Environment" type="Node3D" parent="."]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Environment"]
+environment = SubResource("Environment_dk8ui")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Environment"]
+transform = Transform3D(1.00077, 0, 0, 0, 0.0210108, 1.00055, 0, -1.00055, 0.0210108, 0, 24.6138, 0)
+shadow_enabled = true
