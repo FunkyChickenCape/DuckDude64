@@ -17,6 +17,8 @@ config/icon="res://icon.svg"
 
 [display]
 
+window/size/viewport_width=640
+window/size/viewport_height=480
 window/size/mode=3
 window/subwindows/embed_subwindows=false
 window/frame_pacing/android/enable_frame_pacing=false

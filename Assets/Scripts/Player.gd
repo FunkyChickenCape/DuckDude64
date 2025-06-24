@@ -1,14 +1,15 @@
 extends CharacterBody3D
 
-@export var speed: float = 5.0
-@export var sprint_multiplier: float = 2.0
+# Движение
+@export var speed: float = 5
+@export var sprint_multiplier: float = 3.5
 @export var jump_velocity: float = 10.0
 @export var gravity: float = 20.0
 @export var air_control_factor: float = 0.5
+@export var acceleration: float = 20.0
+@export var friction: float = 6.0
 
-@export var footstep_sounds: Array[AudioStream] = []
-@export var step_interval: float = 0.4
-
+# Камера
 @export var camera_distance: float = 6.0
 @export var camera_height: float = 7.0
 @export var camera_smooth_speed: float = 10.0
@@ -16,16 +17,24 @@ extends CharacterBody3D
 @export var min_pitch: float = deg_to_rad(-30)
 @export var max_pitch: float = deg_to_rad(60)
 
+# Звук шагов
+@export var footstep_sounds: Array[AudioStream] = []
+@export var step_interval: float = 0.4
+
+# Узлы
 @onready var anim_player: AnimationPlayer = $Character/AnimationPlayer
 @onready var mesh: Node3D = $Character
 @onready var cam_pivot: Node3D = $CameraPivot
 @onready var cam: Camera3D = $CameraPivot/Camera3D
 @onready var footstep_player: AudioStreamPlayer3D = $FootstepPlayer
 
+# Вспомогательные переменные
 var rotation_x: float = 0.0
 var rotation_y: float = 0.0
 var step_timer: float = 0.0
+var move_velocity: Vector3 = Vector3.ZERO
 var remaining_jumps: int = 2
+var was_on_floor: bool = false
 
 func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
@@ -43,9 +52,6 @@ func _input(event):
 		get_tree().change_scene_to_file("res://Assets/Scenes/MainMenu.tscn")
 
 func _physics_process(delta):
-	
-
-	# Обработка движения
 	var input_fb = Input.get_action_strength("ui_up") - Input.get_action_strength("ui_down")
 	var input_lr = Input.get_action_strength("ui_right") - Input.get_action_strength("ui_left")
 
@@ -55,23 +61,38 @@ func _physics_process(delta):
 	if abs(input_fb) > 0.1 or abs(input_lr) > 0.1:
 		is_moving = true
 		var cam_basis = cam_pivot.global_transform.basis
-		var forward = -cam_basis.z
-		var right = cam_basis.x
-		var dir = Vector2(input_lr, input_fb).normalized()
-		move_dir = (right * dir.x + forward * dir.y).normalized()
+		var forward = -cam_basis.z.normalized()
+		var right = cam_basis.x.normalized()
+		var input_vector = Vector2(input_lr, input_fb).normalized()
+		move_dir = (right * input_vector.x + forward * input_vector.y).normalized()
 
 	var current_speed = speed
 	if Input.is_action_pressed("sprint"):
 		current_speed *= sprint_multiplier
 
-	if is_on_floor():
-		velocity.x = move_dir.x * current_speed
-		velocity.z = move_dir.z * current_speed
-	else:
-		velocity.x = move_dir.x * current_speed * air_control_factor
-		velocity.z = move_dir.z * current_speed * air_control_factor
+	var target_velocity = move_dir * current_speed
 
-	# Поворот персонажа в сторону движения
+	# Ускорение и инерция
+	var accel = acceleration * delta
+	if is_on_floor():
+		move_velocity.x = lerp(move_velocity.x, target_velocity.x, accel)
+		move_velocity.z = lerp(move_velocity.z, target_velocity.z, accel)
+	else:
+		var air_accel = accel * air_control_factor
+		move_velocity.x = lerp(move_velocity.x, target_velocity.x, air_accel)
+		move_velocity.z = lerp(move_velocity.z, target_velocity.z, air_accel)
+
+	# Применяем трение если не двигается
+	if move_dir == Vector3.ZERO:
+		var friction_factor = pow(1.0 - delta * friction, delta * 60.0)
+		move_velocity.x *= friction_factor
+		move_velocity.z *= friction_factor
+
+	# Применяем горизонтальную скорость
+	velocity.x = move_velocity.x
+	velocity.z = move_velocity.z
+
+	# Поворот модели
 	if is_moving:
 		var target_rot = atan2(-move_dir.x, -move_dir.z)
 		mesh.rotation.y = lerp_angle(mesh.rotation.y, target_rot, 0.2)
@@ -82,20 +103,22 @@ func _physics_process(delta):
 		if not is_on_floor():
 			remaining_jumps -= 1
 
-	if is_on_floor():
-		remaining_jumps = 2
-		if velocity.y < 0:
-			velocity.y = 0
-	else:
+	# Гравитация
+	if not is_on_floor():
 		velocity.y -= gravity * delta
+	elif velocity.y < 0:
+		velocity.y = 0
 
+	# Движение
 	self.velocity = velocity
 	move_and_slide()
 
-	# Обновление камеры
-	update_camera(delta)
+	# Сброс прыжков только при приземлении
+	if not was_on_floor and is_on_floor():
+		remaining_jumps = 1  # потому что 1 прыжок уже на земле, +1 в воздухе = 2
+	was_on_floor = is_on_floor()
 
-	# Анимации и шаги
+	update_camera(delta)
 	play_animations()
 	play_footsteps(delta)
 
