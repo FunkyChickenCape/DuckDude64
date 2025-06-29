@@ -130,7 +130,7 @@ func update_camera(delta):
 	pivot_tf.origin = new_pos
 	cam_pivot.global_transform = pivot_tf
 
-	var look_target = global_transform.origin + Vector3(0, 1.5, 0)
+	var look_target = global_transform.origin + Vector3(0, 1, 0)
 	cam.look_at(look_target, Vector3.UP)
 
 func play_animations():

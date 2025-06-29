@@ -1,4 +1,4 @@
-[gd_scene load_steps=35 format=4 uid="uid://b3diss6jpbmqs"]
+[gd_scene load_steps=32 format=4 uid="uid://b3diss6jpbmqs"]
 
 [ext_resource type="Texture2D" uid="uid://c0yqcuopmv68j" path="res://Assets/Models/Character_Duckdude.png" id="2_fbrj6"]
 [ext_resource type="Script" uid="uid://cnwreekvjy4mj" path="res://Assets/Scripts/Player.gd" id="2_l3se7"]
@@ -6,7 +6,6 @@
 [ext_resource type="Texture2D" uid="uid://bo3eikcaostwv" path="res://Assets/Images/sky.png" id="3_uda6b"]
 [ext_resource type="Texture2D" uid="uid://bec3i3v7nwbo" path="res://Assets/Models/Island_dfda1b1e-94c8-4388-8ef2-3509be5c7241.png" id="4_n8efl"]
 [ext_resource type="Script" uid="uid://m18e2ksuwhhs" path="res://Assets/Scripts/Hud.gd" id="6_e5hbr"]
-[ext_resource type="Shader" uid="uid://bou8285n7a3xq" path="res://Assets/Shader/psx_camera_shader.gdshader" id="7_i306y"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_e5hbr"]
 radius = 0.794421
@@ -951,26 +950,6 @@ _data = {
 &"Walk": SubResource("Animation_1jsdp")
 }
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_2rap5"]
-render_priority = 0
-shader = ExtResource("7_i306y")
-shader_parameter/enable_fog = true
-shader_parameter/fog_color = Color(0.729412, 0.729412, 0.729412, 1)
-shader_parameter/noise_color = Color(0, 0, 0, 1)
-shader_parameter/fog_distance = 100.0
-shader_parameter/fog_fade_range = 50.0
-shader_parameter/enable_noise = false
-shader_parameter/noise_time_fac = 4.0
-shader_parameter/enable_color_limitation = true
-shader_parameter/color_levels = 32
-shader_parameter/enable_dithering = false
-shader_parameter/dither_strength = 0.3
-
-[sub_resource type="QuadMesh" id="QuadMesh_72nh5"]
-material = SubResource("ShaderMaterial_2rap5")
-flip_faces = true
-size = Vector2(2, 2)
-
 [sub_resource type="BoxMesh" id="BoxMesh_e5hbr"]
 size = Vector3(1, 47.89, 48.67)
 
@@ -1165,12 +1144,7 @@ transform = Transform3D(0.999187, 0, 0, 0, 0.999187, 0, 0, 0, 0.999187, 0, -0.75
 [node name="CameraPivot" type="Node3D" parent="Player"]
 
 [node name="Camera3D" type="Camera3D" parent="Player/CameraPivot"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.80489, 2.47813)
-
-[node name="PSXMesh" type="MeshInstance3D" parent="Player"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0763102, 0, -0.55748)
-mesh = SubResource("QuadMesh_72nh5")
-skeleton = NodePath("../CameraPivot")
+transform = Transform3D(0.998422, 0, 0, 0, 0.998422, 0, 0, 0, 0.998422, 0, 0, 0)
 
 [node name="World" type="Node3D" parent="."]
 
