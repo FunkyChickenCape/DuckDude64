@@ -82,8 +82,14 @@ sprint={
 ]
 }
 
+[physics]
+
+common/vsync/vsync_mode=0
+common/size/mode=3
+
 [rendering]
 
 textures/canvas_textures/default_texture_filter=0
-renderer/rendering_method.mobile="gl_compatibility"
+renderer/rendering_method.mobile="forward_plus"
+renderer/rendering_method.web="forward_plus"
 anti_aliasing/screen_space_roughness_limiter/enabled=false

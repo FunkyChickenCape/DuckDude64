@@ -2,8 +2,8 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cvfniw8s3u50h"
-path.s3tc="res://.godot/imported/Island_e00b6898-5ef6-454b-a5cc-109bde8158c1.png-4b897c082ef5544188092cdcd7c03443.s3tc.ctex"
+uid="uid://bec3i3v7nwbo"
+path.s3tc="res://.godot/imported/Island_dfda1b1e-94c8-4388-8ef2-3509be5c7241.png-852cc9ffe5c4eb255607bbc9343f4979.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://Assets/Models/Island_e00b6898-5ef6-454b-a5cc-109bde8158c1.png"
-dest_files=["res://.godot/imported/Island_e00b6898-5ef6-454b-a5cc-109bde8158c1.png-4b897c082ef5544188092cdcd7c03443.s3tc.ctex"]
+source_file="res://Assets/Images/Island_dfda1b1e-94c8-4388-8ef2-3509be5c7241.png"
+dest_files=["res://.godot/imported/Island_dfda1b1e-94c8-4388-8ef2-3509be5c7241.png-852cc9ffe5c4eb255607bbc9343f4979.s3tc.ctex"]
 
 [params]
 

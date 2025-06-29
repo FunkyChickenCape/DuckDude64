@@ -1,6 +1,9 @@
 extends CanvasLayer
 
 @onready var stats_label = $StatsLabel
+@onready var coin_label = $CoinLabel
+
+var coin_count: int = 0
 
 func _process(_delta):
 	var fps = Engine.get_frames_per_second()
@@ -11,3 +14,12 @@ func _process(_delta):
 	stats_label.text = "FPS: %d\nObjects: %d\nRendered: %d\nMemory: %.2f MB" % [
 		fps, obj_count, rendered_objects, memory_mb
 	]
+	# Можно обновлять счёт монет в _process, но лучше обновлять только при изменении.
+	# coin_label.text = "Coins: %d" % coin_count
+
+func add_coin():
+	coin_count += 1
+	update_coin_label()
+
+func update_coin_label():
+	coin_label.text = "Coins: %d" % coin_count
