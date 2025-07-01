@@ -1,6 +1,7 @@
 # 🦆 Duck Dude 64
 ![logo](https://github.com/user-attachments/assets/5c6f34ac-dbbd-472a-86ec-2ce53c3e3ea0)
-
+![Made with Godot](https://img.shields.io/badge/Made%20with-Godot-478CBF?logo=godot-engine&logoColor=white)
+![Status](https://img.shields.io/badge/Status-In%20Development-yellow)
 **Duck Dude 64** is a retro-style 3D platformer inspired by Nintendo 64-era games like *Super Mario 64* and *Banjo-Kazooie*.
 
 ## 🎮 Features
