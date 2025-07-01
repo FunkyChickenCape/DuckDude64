@@ -15,10 +15,6 @@
 - N64/PSX-inspired visual effects  
 - Built with Godot Engine 4
 
-## 🚧 Development Status
-
-In early development.  
-Playable demo coming soon.
 
 ## 💻 Tech Stack
 
@@ -26,9 +22,6 @@ Playable demo coming soon.
 - Blender (models & animation)  
 - GDScript
 
-## 📦 Downloads
-
-Coming soon — stay tuned!
 
 ## 🤝 Contributing
 
