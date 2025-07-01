@@ -2,9 +2,11 @@ extends CharacterBody3D
 
 # Движение
 @export var speed: float = 5
+@export var swim_speed: float = 3.0
 @export var sprint_multiplier: float = 3.5
 @export var jump_velocity: float = 10.0
 @export var gravity: float = 20.0
+@export var swim_gravity: float = 2.0
 @export var air_control_factor: float = 0.5
 @export var acceleration: float = 20.0
 @export var friction: float = 6.0
@@ -28,7 +30,8 @@ extends CharacterBody3D
 @onready var cam: Camera3D = $CameraPivot/Camera3D
 @onready var footstep_player: AudioStreamPlayer3D = $FootstepPlayer
 
-# Вспомогательные переменные
+# Состояния
+var is_in_water: bool = false
 var rotation_x: float = 0.0
 var rotation_y: float = 0.0
 var step_timer: float = 0.0
@@ -66,60 +69,63 @@ func _physics_process(delta):
 		var input_vector = Vector2(input_lr, input_fb).normalized()
 		move_dir = (right * input_vector.x + forward * input_vector.y).normalized()
 
-	var current_speed = speed
-	if Input.is_action_pressed("sprint"):
-		current_speed *= sprint_multiplier
+	if is_in_water:
+		# Плавание
+		velocity.x = move_dir.x * swim_speed
+		velocity.z = move_dir.z * swim_speed
 
-	var target_velocity = move_dir * current_speed
-
-	# Ускорение и инерция
-	var accel = acceleration * delta
-	if is_on_floor():
-		move_velocity.x = lerp(move_velocity.x, target_velocity.x, accel)
-		move_velocity.z = lerp(move_velocity.z, target_velocity.z, accel)
+		if Input.is_action_pressed("ui_accept"):  # прыжок — всплытие
+			velocity.y = swim_speed
+		else:
+			velocity.y -= swim_gravity * delta
 	else:
-		var air_accel = accel * air_control_factor
-		move_velocity.x = lerp(move_velocity.x, target_velocity.x, air_accel)
-		move_velocity.z = lerp(move_velocity.z, target_velocity.z, air_accel)
+		# Обычное движение
+		var current_speed = speed
+		if Input.is_action_pressed("sprint"):
+			current_speed *= sprint_multiplier
 
-	# Применяем трение если не двигается
-	if move_dir == Vector3.ZERO:
-		var friction_factor = pow(1.0 - delta * friction, delta * 60.0)
-		move_velocity.x *= friction_factor
-		move_velocity.z *= friction_factor
+		var target_velocity = move_dir * current_speed
 
-	# Применяем горизонтальную скорость
-	velocity.x = move_velocity.x
-	velocity.z = move_velocity.z
+		var accel = acceleration * delta
+		if is_on_floor():
+			move_velocity.x = lerp(move_velocity.x, target_velocity.x, accel)
+			move_velocity.z = lerp(move_velocity.z, target_velocity.z, accel)
+		else:
+			var air_accel = accel * air_control_factor
+			move_velocity.x = lerp(move_velocity.x, target_velocity.x, air_accel)
+			move_velocity.z = lerp(move_velocity.z, target_velocity.z, air_accel)
 
-	# Поворот модели
-	if is_moving:
-		var target_rot = atan2(-move_dir.x, -move_dir.z)
-		mesh.rotation.y = lerp_angle(mesh.rotation.y, target_rot, 0.2)
+		if move_dir == Vector3.ZERO:
+			var friction_factor = pow(1.0 - delta * friction, delta * 60.0)
+			move_velocity.x *= friction_factor
+			move_velocity.z *= friction_factor
 
-	# Прыжок
-	if Input.is_action_just_pressed("ui_accept") and (is_on_floor() or remaining_jumps > 0):
-		velocity.y = jump_velocity
+		velocity.x = move_velocity.x
+		velocity.z = move_velocity.z
+
+		if is_moving:
+			var target_rot = atan2(-move_dir.x, -move_dir.z)
+			mesh.rotation.y = lerp_angle(mesh.rotation.y, target_rot, 0.2)
+
+		if Input.is_action_just_pressed("ui_accept") and (is_on_floor() or remaining_jumps > 0):
+			velocity.y = jump_velocity
+			if not is_on_floor():
+				remaining_jumps -= 1
+
 		if not is_on_floor():
-			remaining_jumps -= 1
+			velocity.y -= gravity * delta
+		elif velocity.y < 0:
+			velocity.y = 0
 
-	# Гравитация
-	if not is_on_floor():
-		velocity.y -= gravity * delta
-	elif velocity.y < 0:
-		velocity.y = 0
-
-	# Движение
 	self.velocity = velocity
 	move_and_slide()
 
-	# Сброс прыжков только при приземлении
-	if not was_on_floor and is_on_floor():
-		remaining_jumps = 1  # потому что 1 прыжок уже на земле, +1 в воздухе = 2
+	if not was_on_floor and is_on_floor() and not is_in_water:
+		remaining_jumps = 1
 	was_on_floor = is_on_floor()
 
 	update_camera(delta)
-	play_animations()
+	play_animations(move_dir)
 	play_footsteps(delta)
 
 func update_camera(delta):
@@ -133,8 +139,15 @@ func update_camera(delta):
 	var look_target = global_transform.origin + Vector3(0, 1, 0)
 	cam.look_at(look_target, Vector3.UP)
 
-func play_animations():
-	if is_on_floor():
+func play_animations(move_dir: Vector3):
+	if is_in_water:
+		if move_dir.length() > 0.1:
+			if anim_player.current_animation != "Swim":
+				anim_player.play("Swim")
+		else:
+			if anim_player.current_animation != "Swim_na_meste":
+				anim_player.play("Swim_na_meste")
+	elif is_on_floor():
 		if velocity.length() > 0.1:
 			if Input.is_action_pressed("sprint") and anim_player.has_animation("Run"):
 				anim_player.play("Run")
@@ -148,7 +161,7 @@ func play_animations():
 			anim_player.play("Jump")
 
 func play_footsteps(delta):
-	if is_on_floor() and velocity.length() > 0.1:
+	if is_on_floor() and velocity.length() > 0.1 and not is_in_water:
 		step_timer -= delta
 		if step_timer <= 0.0:
 			if footstep_sounds.size() > 0:
@@ -162,3 +175,15 @@ func play_footsteps(delta):
 func lerp_angle(a: float, b: float, t: float) -> float:
 	var diff = wrapf(b - a + PI, -PI, PI)
 	return a + diff * t
+
+# Методы, вызываемые Area3D водой:
+func _on_WaterArea_entered_water():
+	is_in_water = true
+	velocity = Vector3.ZERO
+	if anim_player.has_animation("Swim_na_meste"):
+		anim_player.play("Swim_na_meste")
+
+func _on_WaterArea_exited_water():
+	is_in_water = false
+	if anim_player.has_animation("Idle"):
+		anim_player.play("Idle")
